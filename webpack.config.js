@@ -6,7 +6,7 @@ const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const terserPlugin = require("terser-webpack-plugin");
 
-process.env.TZ = "ETC/UTC";
+process.env.TZ = process.env.TZ || "ETC/UTC";
 const mode = process.env.NODE_ENV || "development";
 const template = path.resolve(__dirname, "template", "index.html");
 const entry = path.resolve(__dirname, "react", "index.tsx");
@@ -17,10 +17,23 @@ const outPath = path.resolve(__dirname, "public");
 const minimize = mode === "product";
 const minimizer = minimize
     ? [
-          new terserPlugin({
-              parallel: true,
-          }),
-      ]
+        new terserPlugin({
+            terserOptions: {
+                parse: {
+                    ecma: 8,
+                },
+                mangle: {
+                    safari10: true,
+                },
+                output: {
+                    ecma: 5,
+                    comments: false,
+                    ascii_only: true,
+                },
+            },
+            parallel: true,
+        }),
+    ]
     : [];
 
 const fnNewJsNm = () => {
