@@ -1,7 +1,7 @@
 # Start React without CLI
 
 ### Default tools
-* webpack 5.8
-* react 1
+* webpack
+* react
 * prettier
 * typescript
