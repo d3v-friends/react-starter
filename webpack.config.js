@@ -5,6 +5,8 @@ const webpack = require("webpack");
 const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const terserPlugin = require("terser-webpack-plugin");
+const miniCssExtractPlugin = require("mini-css-extract-plugin");
+
 
 process.env.TZ = process.env.TZ || "ETC/UTC";
 const mode = process.env.NODE_ENV || "development";
@@ -14,7 +16,7 @@ const staticPath = path.resolve(__dirname, "template");
 const devtool = mode === "development" ? "inline-source-map" : false;
 const port = Number(process.env.PORT) || 3100;
 const outPath = path.resolve(__dirname, "public");
-const minimize = mode === "product";
+const minimize = mode === "production";
 const minimizer = minimize
     ? [
         new terserPlugin({
@@ -40,7 +42,7 @@ const fnNewJsNm = () => {
     const now = new Date();
     return `${now.getFullYear()}_${
         now.getMonth() + 1
-    }_${now.getDay()}_${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}.js`;
+    }_${now.getDay()}_${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}.[name].js`;
 };
 
 module.exports = {
@@ -69,6 +71,11 @@ module.exports = {
                     },
                 ],
             },
+            // css 사용시 활성화 하기
+            // {
+            //     test: /\.css$/i,
+            //     use: [miniCssExtractPlugin.loader, "css-loader"]
+            // },
             {
                 test: /\.(png|jpe?g|gif|svg)$/i,
                 use: [
@@ -125,6 +132,10 @@ module.exports = {
     optimization: {
         minimize,
         minimizer,
+        runtimeChunk: "single",
+        splitChunks: {
+            chunks: "all",
+        }
     },
     output: {
         filename: fnNewJsNm(),
